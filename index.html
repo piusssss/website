@@ -3,68 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>导游图仿真界面</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <title>迷宫逃脱游戏</title>
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            padding: 0;
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
         }
-        #map {
-            height: 100%;
+        #maze {
+            display: grid;
+            grid-template-columns: repeat(5, 50px);
+            grid-template-rows: repeat(5, 50px);
+            gap: 5px;
+            margin: 0 auto;
         }
-        .info {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-            background: white;
-            padding: 10px;
-            border: 1px solid #ccc;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .cell {
+            width: 50px;
+            height: 50px;
+            background-color: #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .start {
+            background-color: green;
+        }
+        .end {
+            background-color: red;
+        }
+        .player {
+            background-color: blue;
+        }
+        .wall {
+            background-color: black;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <div id="map"></div>
-    <div class="info" id="info" style="display: none;">
-        <h3>景点信息</h3>
-        <p id="info-content"></p>
+    <h1>迷宫逃脱游戏</h1>
+    <div id="maze"></div>
+    <div class="button-container">
+        <button onclick="move('up')">上</button>
+        <button onclick="move('down')">下</button>
+        <button onclick="move('left')">左</button>
+        <button onclick="move('right')">右</button>
     </div>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <div id="message"></div>
+
     <script>
+        const maze = [
+            [1, 1, 1, 1, 1],
+            [1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 1],
+            [1, 1, 1, 0, 1],
+            [1, 0, 1, 0, 2]
+        ];
+
+        const directions = {
+            up: [-1, 0],
+            down: [1, 0],
+            left: [0, -1],
+            right: [0, 1]
+        };
+
+        let playerPosition = { x: 1, y: 1 };
+
+        function renderMaze() {
+            const mazeContainer = document.getElementById('maze');
+            mazeContainer.innerHTML = '';
+            for (let i = 0; i < maze.length; i++) {
+                for (let j = 0; j < maze[i].length; j++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    if (i === playerPosition.x && j === playerPosition.y) {
+                        cell.classList.add('player');
+                    } else if (maze[i][j] === 1) {
+                        cell.classList.add('wall');
+                    } else if (maze[i][j] === 2) {
+                        cell.classList.add('end');
+                    } else if (i === 0 && j === 0) {
+                        cell.classList.add('start');
+                    }
+                    mazeContainer.appendChild(cell);
+                }
+            }
+        }
+
+        function move(direction) {
+            const [dx, dy] = directions[direction];
+            const newX = playerPosition.x + dx;
+            const newY = playerPosition.y + dy;
+
+            if (newX >= 0 && newX < maze.length && newY >= 0 && newY < maze[0].length && maze[newX][newY] !== 1) {
+                playerPosition = { x: newX, y: newY };
+                renderMaze();
+                if (maze[newX][newY] === 2) {
+                    document.getElementById('message').textContent = '恭喜你，逃脱成功！';
+                    document.getElementById('message').style.color = 'green';
+                }
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
-            // 初始化地图
-            var map = L.map('map').setView([39.9042, 116.4074], 13); // 北京市经纬度
-
-            // 添加地图图层
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-
-            // 定义景点
-            var points = [
-                { lat: 39.913818, lng: 116.363645, name: '天安门广场', description: '天安门广场位于北京市中心，是世界上最大的城市广场之一。' },
-                { lat: 39.929643, lng: 116.397528, name: '故宫博物院', description: '故宫博物院是中国最大的古代文化艺术博物馆，位于北京市中心。' },
-                { lat: 39.904211, lng: 116.407396, name: '前门大街', description: '前门大街是北京著名的商业街，历史悠久，充满传统风情。' }
-            ];
-
-            // 添加标记点
-            points.forEach(function (point) {
-                var marker = L.marker([point.lat, point.lng]).addTo(map);
-                marker.bindPopup(point.name);
-
-                marker.on('click', function () {
-                    document.getElementById('info').style.display = 'block';
-                    document.getElementById('info-content').innerHTML = `<strong>${point.name}</strong><br>${point.description}`;
-                });
-            });
-
-            // 关闭信息框
-            document.getElementById('info').addEventListener('click', function () {
-                this.style.display = 'none';
-            });
+            renderMaze();
         });
     </script>
 </body>
