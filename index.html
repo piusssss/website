@@ -3,123 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>迷宫逃脱游戏</title>
+    <title>大清第一杀手</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-        #maze {
-            display: grid;
-            grid-template-columns: repeat(5, 50px);
-            grid-template-rows: repeat(5, 50px);
-            gap: 5px;
-            margin: 0 auto;
-        }
-        .cell {
-            width: 50px;
-            height: 50px;
-            background-color: #ccc;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #000000, #151413);
+            overflow: hidden;
         }
-        .start {
-            background-color: green;
+        h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 64px;
+            color: #ffffff;
+            text-shadow: 0 0 10px #ff0000, 0 0 20px #3dfc08, 0 0 30px #0968ec, 0 0 40px #df06f2;
+            animation: neon 1.5s ease-in-out infinite alternate;
+            margin-top: 400px; /* 增加顶部外边距 */
         }
-        .end {
-            background-color: red;
+        @keyframes neon {
+            from {
+                text-shadow: 0 0 10px #ff3300, 0 0 20px #00ff2f, 0 0 30px #3705ff, 0 0 40px #ff0099;
+            }
+            to {
+                text-shadow: 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0000, 0 0 50px #ff0202;
+            }
         }
-        .player {
-            background-color: blue;
+        .image-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
         }
-        .wall {
-            background-color: black;
-        }
-        .button-container {
-            margin-top: 20px;
-        }
-        .button-container button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 5px;
-        }
-        #message {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #333;
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
     </style>
 </head>
 <body>
-    <h1>迷宫逃脱游戏</h1>
-    <div id="maze"></div>
-    <div class="button-container">
-        <button onclick="move('up')">上</button>
-        <button onclick="move('down')">下</button>
-        <button onclick="move('left')">左</button>
-        <button onclick="move('right')">右</button>
+    <div class="image-container">
+        <img src="20240717133953.jpg" alt="背景图片">
     </div>
-    <div id="message"></div>
-
-    <script>
-        const maze = [
-            [1, 1, 1, 1, 1],
-            [1, 0, 1, 0, 1],
-            [1, 0, 0, 0, 1],
-            [1, 1, 1, 0, 1],
-            [1, 0, 1, 0, 2]
-        ];
-
-        const directions = {
-            up: [-1, 0],
-            down: [1, 0],
-            left: [0, -1],
-            right: [0, 1]
-        };
-
-        let playerPosition = { x: 1, y: 1 };
-
-        function renderMaze() {
-            const mazeContainer = document.getElementById('maze');
-            mazeContainer.innerHTML = '';
-            for (let i = 0; i < maze.length; i++) {
-                for (let j = 0; j < maze[i].length; j++) {
-                    const cell = document.createElement('div');
-                    cell.classList.add('cell');
-                    if (i === playerPosition.x && j === playerPosition.y) {
-                        cell.classList.add('player');
-                    } else if (maze[i][j] === 1) {
-                        cell.classList.add('wall');
-                    } else if (maze[i][j] === 2) {
-                        cell.classList.add('end');
-                    } else if (i === 0 && j === 0) {
-                        cell.classList.add('start');
-                    }
-                    mazeContainer.appendChild(cell);
-                }
-            }
-        }
-
-        function move(direction) {
-            const [dx, dy] = directions[direction];
-            const newX = playerPosition.x + dx;
-            const newY = playerPosition.y + dy;
-
-            if (newX >= 0 && newX < maze.length && newY >= 0 && newY < maze[0].length && maze[newX][newY] !== 1) {
-                playerPosition = { x: newX, y: newY };
-                renderMaze();
-                if (maze[newX][newY] === 2) {
-                    document.getElementById('message').textContent = '恭喜你，逃脱成功！';
-                    document.getElementById('message').style.color = 'green';
-                }
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            renderMaze();
-        });
-    </script>
+    <h1>大清第一杀手</h1>
 </body>
 </html>
